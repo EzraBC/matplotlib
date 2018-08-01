@@ -689,10 +689,13 @@ class BboxBase(TransformNode):
     def padded(self, p):
         """
         Return a new :class:`Bbox` that is padded on all four sides by
-        the given value.
+        the given value.  Allows for p to be a dict {key: padding} with
+        keys [west, south, east, north].
         """
+        if not isinstance(p, dict):
+          p = dict.fromkeys(('west', 'south', 'east', 'north'), p)
         points = self.get_points()
-        return Bbox(points + [[-p, -p], [p, p]])
+        return Bbox(points + [[-p['west'], -p['south']], [p['east'], p['north']]])
 
     def translated(self, tx, ty):
         """
