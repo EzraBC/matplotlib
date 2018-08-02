@@ -690,12 +690,17 @@ class BboxBase(TransformNode):
         """
         Return a new :class:`Bbox` that is padded on all four sides by
         the given values. The parameter p can be a dict with keys
-        ['west', 'south', 'east', 'north'] or a single value.
+        ['left', 'right', 'bottom', 'top'], a tuple or list in the same
+        order, or a single value.
         """
+        keys = ['left', 'right', 'bottom', 'top']
         if not isinstance(p, dict):
-          p = dict.fromkeys(('west', 'south', 'east', 'north'), p)
+            if any(isinstance(p, t) for t in (tuple, list)):
+                p = dict(zip(keys, p))
+            else:
+                p = dict.fromkeys(keys, p)
         points = self.get_points()
-        return Bbox(points + [[-p['west'], -p['south']], [p['east'], p['north']]])
+        return Bbox(points + [[-p['left'], -p['bottom']], [p['right'], p['top']]])
 
     def translated(self, tx, ty):
         """
